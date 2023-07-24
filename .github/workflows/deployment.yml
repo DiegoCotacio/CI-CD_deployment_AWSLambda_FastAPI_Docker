@@ -25,9 +25,7 @@ jobs:
 
     - name: Run training_pipeline.py
       run: |
-        cd src
-        python training_pipeline.py
-        cd ..
+        python src/training_pipeline.py
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
