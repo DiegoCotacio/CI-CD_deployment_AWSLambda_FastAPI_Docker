@@ -34,9 +34,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
         role-to-assume: arn:aws:iam::193194117892:role/service-role/ml-cicd-testing-role-g3nc3y0o
-        role-duration-seconds: 1200
         role-session-name: MySessionName
-
+        
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
