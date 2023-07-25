@@ -30,6 +30,7 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
+        #role-to-assume: arn:aws:iam::193194117892:role/service-role/ml-cicd-testing-role-g3nc3y0o
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
@@ -39,6 +40,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push image to Amazon ECR
+      id: build-custom-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ml-cicd-testing
@@ -46,9 +48,11 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
-    - name: Deploy Container Image to Lambda Function
-      uses: int128/deploy-lambda-action@v1
-      with:
-        function-name: ml-cicd-testing
-        image-uri: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Update aws custom lambda function code
+      id: update-custom-function-code
+      env:
+        IMAGE_URI: ${{ steps.build-custom-image.outputs.image }}
+      run: |
+        aws lambda update-function-code --function-name arn:aws:lambda:us-east-2:193194117892:function:ml-cicd-testing --image-uri $IMAGE_URI
