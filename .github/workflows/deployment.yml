@@ -59,6 +59,4 @@ jobs:
         AWS_DEFAULT_REGION : us-east-2
         
       run: |
-        aws lambda update-function-code 
-        --function-name ${{env.AWS_LAMBDA_FUNC_NAME}}
-        --image-uri "${{ secrets.AWS_ECR_IMAGE_URI }}:$IMAGE_TAG"
+        aws lambda update-function-code --function-name ${{env.AWS_LAMBDA_FUNC_NAME}} --image-uri "${{ secrets.AWS_ECR_IMAGE_URI }}:$IMAGE_TAG"
