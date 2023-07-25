@@ -45,11 +45,7 @@ jobs:
         ECR_REPOSITORY: ml-cicd-testing
         IMAGE_TAG: latest
       run: |
-        docker build  \
-        --build-arg AWS_ACCESS_KEY_ID = ${{ secrets.AWS_ACCESS_KEY_ID }} \
-        --build-arg AWS_SECRET_ACCESS_KEY = ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-        --build-arg AWS_DEFAULT_REGION = us-east-2 \
-        -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . 
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
@@ -58,9 +54,9 @@ jobs:
       env:
         IMAGE_TAG: latest
         AWS_LAMBDA_FUNC_NAME: ml-cicd-testing
-        AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }} \
-        AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-        AWS_DEFAULT_REGION : ${{env.AWS_DEFAULT_REGION }} \
+        AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION : us-east-2
         
       run: |
         aws lambda update-function-code 
